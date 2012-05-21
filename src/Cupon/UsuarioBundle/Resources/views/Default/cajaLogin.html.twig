@@ -1,0 +1,11 @@
+<h2>Accede a tu cuenta</h2>
+<form action="{{ path('usuario_login_check') }}" method="post">
+    
+     <label for="login_user">Email:</label>
+     <input type="text" id="login_user" name="_username" value="{{ last_username | default('') }}"/>
+
+    <label for="login_pass">Contraseña:</label>
+    <input type="password" id="login_pass" name="_password"/>
+
+    <input type="submit" value="Entrar"/>
+</form>
