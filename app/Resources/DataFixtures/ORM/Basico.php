@@ -61,7 +61,12 @@ class Basico implements FixtureInterface, ContainerAwareInterface
                 $tienda = new Tienda();
                 $tienda->setNombre('Tienda #'.$numTienda);
                 $tienda->setLogin('tienda'.$numTienda);
-                $tienda->setPassword('password'.$numTienda);
+                
+                $passwordEnClaro = 'tienda'.$i;
+                $encoder = $this->container->get('security.encoder_factory')->getEncoder($tienda);
+                $passwordCodificado = $encoder->encodePassword($passwordEnClaro, $tienda->getSalt());
+                $tienda->setPassword($passwordCodificado);
+                
                 $tienda->setSalt(md5(time()));
                 $tienda->setDescription('Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat');
                 $tienda->setDireccion("Calle Lorem Ipsum, 5\n".$ciudad->getNombre());
@@ -134,8 +139,17 @@ class Basico implements FixtureInterface, ContainerAwareInterface
                 $usuario->setNombre('Usuario #'.$numUsuario);
                 $usuario->setApellidos('Apellido1 Apellido2');
                 $usuario->setEmail('usuario'.$numUsuario.'@localhost');
-                $usuario->setSalt('');
-                $usuario->setPassword('password'.$numUsuario);
+                
+                $passwordEnClaro = 'usuario'.$numUsuario;
+                $salt = md5(time());
+            
+                $encoder = $this->container->get('security.encoder_factory')
+                     ->getEncoder($usuario);
+                $password = $encoder->encodePassword($passwordEnClaro, $salt);
+            
+                $usuario->setPassword($password);
+                $usuario->setSalt($salt);
+                
                 $usuario->setDireccion("Calle Ipsum Lorem, 2\n".$ciudad->getNombre());
                 // El 60% de los usuarios permite email
                 $usuario->setPermiteEmail((rand(1, 1000) % 10) < 6);

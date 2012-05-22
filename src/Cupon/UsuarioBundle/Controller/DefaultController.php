@@ -4,10 +4,18 @@ namespace Cupon\UsuarioBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Security\Core\SecurityContext;
+use Cupon\UsuarioBundle\Entity\Usuario;
 
 
 class DefaultController extends Controller
 {
+    public function defaultAction() {
+        $usuario = new Usuario();
+        $encoder = $this->get('security.encoder_factory')->getEncoder($usuario);
+        $password = $encoder->encodePassword('la-contraseña-en-claro', $usuario->getSalt());
+        $usuario->setPassword($password);
+    }
+    
     public function comprasAction()
     {
         $usuario_id = 1;
