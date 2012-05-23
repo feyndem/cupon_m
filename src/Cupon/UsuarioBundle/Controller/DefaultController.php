@@ -5,6 +5,8 @@ namespace Cupon\UsuarioBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Security\Core\SecurityContext;
 use Cupon\UsuarioBundle\Entity\Usuario;
+use Cupon\UsuarioBundle\Form\Frontend\UsuarioType;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 
 class DefaultController extends Controller
@@ -54,5 +56,49 @@ class DefaultController extends Controller
                 array(
                    'last_username' => $sesion->get(SecurityContext::LAST_USERNAME)
                     ));
+    }
+    
+    public function registroAction()
+    {
+        $peticion = $this->getRequest();
+        
+        $usuario = new Usuario();
+        $formulario = $this->createForm(new UsuarioType(), $usuario);
+        
+        if($peticion->getMethod() == 'POST') {
+            // Validar y guardar
+            $formulario->bindRequest($peticion);
+            if($formulario->isValid()){
+                $encoder = $this->get('security.encoder_factory')->getEncoder($usuario);
+                $usuario->setSalt(md5(time()));
+                $passwordCodificado = $encoder->encodePassword(
+                        $usuario->getPassword(),
+                        $usuario->getSalt()
+                        );
+                $usuario->setPassword($passwordCodificado);
+                $em = $this->getDoctrine()->getEntityManager();
+                $em->persist($usuario);
+                $em->flush();
+                
+                $this->get('session')->setFlash('info', 'Registrado con éxito');
+                
+                $token = new UsernamePasswordToken($usuario, 
+                        $usuario->getPassword(),
+                        'usuarios',
+                        $usuario->getRoles()
+                        );
+                $this->container->get('security.context')->setToken($token);
+                
+                return $this->redirect($this->generateUrl('portada'));
+            }
+        }
+                
+        $usuario->setPermiteEmail(true);
+        $usuario->setFechaNacimiento(new \DateTime('today - 18 years'));
+        
+        
+        return $this->render('UsuarioBundle:Default:registro.html.twig', array(
+            'formulario' => $formulario->createView()
+        ));
     }
 }

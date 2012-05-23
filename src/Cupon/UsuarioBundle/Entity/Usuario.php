@@ -4,12 +4,17 @@ namespace Cupon\UsuarioBundle\Entity;
 
 use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\ExecutionContext;
+use Symfony\Bridge\Doctrine\Validator\Constraints as DoctrineAssert;
 
 /**
  * Cupon\UsuarioBundle\Entity\Usuario
  *
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="Cupon\UsuarioBundle\Entity\UsuarioRepository")
+ * @DoctrineAssert\UniqueEntity("email")
+ * @Assert\Callback(methods={"esDniValido"})
  */
 class Usuario implements UserInterface
 {
@@ -26,6 +31,7 @@ class Usuario implements UserInterface
      * @var string $nombre
      *
      * @ORM\Column(name="nombre", type="string", length=100)
+     * @Assert\NotBlank()
      */
     private $nombre;
 
@@ -40,6 +46,7 @@ class Usuario implements UserInterface
      * @var string $email
      *
      * @ORM\Column(name="email", type="string", length=255)
+     * @Assert\Email()
      */
     private $email;
 
@@ -47,6 +54,7 @@ class Usuario implements UserInterface
      * @var string $password
      *
      * @ORM\Column(name="password", type="string", length=255)
+     * @Assert\MinLength(6)
      */
     private $password;
 
@@ -391,5 +399,32 @@ class Usuario implements UserInterface
     public function getUsername()
     {
         return $this->getEmail();
+    }
+    
+    public function esDniValido(ExecutionContext $context)
+    {
+        $nombre_propiedad = $context->getPropertyPath().'.dni';
+        $dni = $this->getDni();
+        
+        if (0 === preg_match("/\d{1,8}[a-z]/i", $dni)) {
+            $context->setPropertyPath($nombre_propiedad);
+            $context->addViolation('El DNI no tiene el formato correcto', array(), null);
+            
+            return;
+        }
+        $numero = substr($dni, 0, -1);
+        $letra = strtoupper(substr($dni, -1));
+        if($letra != substr("TRWAGMYFPDXBNJZSQVHLCKE", strtr($numero, "XYZ", "012")%23, 1)) {
+            $context->setPropertyPath($nombre_propiedad);
+            $context->addViolation('La letra no coincide con el número del DNI', array(), null);            
+        }
+    }
+    
+    /**
+     * @Assert\True(message="Debes ser mayor de edad")
+     */
+    public function isMayorDeEdad()
+    {
+        return $this->fecha_nacimiento <= new \DateTime('today - 18 years');
     }
 }
