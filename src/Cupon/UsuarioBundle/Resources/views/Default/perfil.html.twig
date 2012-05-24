@@ -1,0 +1,25 @@
+{% extends '::frontend.html.twig' %}
+
+{% block id 'usuario' %}
+{% block title %}Ver/Modificar los datos del perfil{% endblock %}
+
+{% block article %}
+<h1>{{ block('title') }}</h1>
+<form action="{{ path('usuario_perfil') }}" method="post" {{ form_enctype(formulario) }}>
+      <div class="errors">
+          {{ form_errors(formulario) }}
+    </div>
+          {{ form_row(formulario.nombre) }}
+          {{ form_row(formulario.apellidos) }}
+          {{ form_row(formulario.fecha_nacimiento) }}
+          {{ form_row(formulario.dni) }}
+          {{ form_row(formulario.direccion) }}
+          {{ form_row(formulario.email) }}
+          {{ form_row(formulario.password) }}
+          {{ form_row(formulario.numero_tarjeta) }}
+          {{ form_row(formulario.ciudad) }}
+          {{ form_row(formulario.permite_email) }}
+          {{ form_rest(formulario) }}
+      <input class="boton" type="submit" value="Modificar" />
+</form>      
+{% endblock %}
