@@ -3,5 +3,7 @@ cambiar_ciudad:
     defaults: { _controller: CiudadBundle:Default:cambiar }
     
 ciudad_recientes:
-    pattern: /{ciudad}/recientes
-    defaults: { _controller: CiudadBundle:Default:Recientes }
+    pattern: /{ciudad}/recientes.{_format}
+    defaults: { _controller: CiudadBundle:Default:Recientes, _format: html }
+    requirements:
+        _format: html|rss
