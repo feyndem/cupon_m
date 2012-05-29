@@ -10,6 +10,7 @@ class DefaultController extends Controller
     
     public function portadaAction($ciudad, $tienda)
     {
+        $formato = $this->get('request')->getRequestFormat();
         $em = $this->getDoctrine()->getEntityManager();
         
         $ciudad = $em->getRepository('CiudadBundle:Ciudad')->findOneBySlug($ciudad);
@@ -29,7 +30,7 @@ class DefaultController extends Controller
                         $tienda->getSlug(),
                         $tienda->getCiudad()->getSlug()
                         );
-         return $this->render('TiendaBundle:Default:portada.html.twig', array(
+         return $this->render('TiendaBundle:Default:portada.'.$formato.'.twig', array(
             'tienda' => $tienda,
             'ofertas' => $ofertas,
             'cercanas' => $cercanas             
