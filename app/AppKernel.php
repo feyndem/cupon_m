@@ -22,6 +22,7 @@ class AppKernel extends Kernel
             new Cupon\TiendaBundle\TiendaBundle(),
             new Cupon\UsuarioBundle\UsuarioBundle(),
             new Symfony\Bundle\DoctrineFixturesBundle\DoctrineFixturesBundle(),
+            new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

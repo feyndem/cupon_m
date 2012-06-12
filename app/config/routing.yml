@@ -1,26 +1,38 @@
 UsuarioBundle:
     resource: "@UsuarioBundle/Resources/config/routing.yml"
-    prefix:   /usuario
+    prefix:   /{_locale}/usuario
+    requirements:
+        _locale: es|en
 
 TiendaBundle:
     resource: "@TiendaBundle/Resources/config/routing.yml"
-    prefix:   /
+    prefix:   /{_locale}
+    requirements:
+        _locale: es|en
 
 CiudadBundle:
     resource: "@CiudadBundle/Resources/config/routing.yml"
-    prefix:   /
+    prefix:   /{_locale}
+    requirements:
+        _locale: es|en
 
 OfertaBundle:
     resource: "@OfertaBundle/Resources/config/routing.yml"
-    prefix:   /
+    prefix:   /{_locale}
+    requirements:
+        _locale: es|en
 
 pagina_estatica:
-    pattern:    /sitio/{pagina}/
+    pattern:    /{_locale}/sitio/{pagina}/
     defaults:    {_controller: OfertaBundle:Sitio:estatica}
+    requirements:
+        _locale: es|en
     
 portada:
-    pattern: /{ciudad}
-    defaults: { _controller: OfertaBundle:Default:portada }
+    pattern: /{_locale}/{ciudad}
+    defaults: { _controller: OfertaBundle:Default:portada, _locale: es }
+    requirements:
+        _locale: es|en
 
 _portada:
     pattern: /

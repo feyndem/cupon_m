@@ -5,7 +5,7 @@ imports:
 
 framework:
     #esi:             ~
-    #translator:      { fallback: %locale% }
+    translator:      { fallback: es }
     secret:          %secret%
     charset:         UTF-8
     router:          { resource: "%kernel.root_dir%/config/routing.yml" }
@@ -65,3 +65,11 @@ jms_security_extra:
     
 parameters:
     cupon.ofertabundle.ciudad_por_defecto: 'ciudad-1'
+    
+# Stof Doctrine Extensions    
+stof-doctrine-extensions:
+    default_locale: es
+    transltion_fallback: true
+    orm:
+        default:
+            translatable: true
